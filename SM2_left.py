@@ -49,7 +49,7 @@ safety_delay=2000 #ms delay to confirm putative maze exit
 #drink module
 # water_reset_port=12
 # GPIO.setup(water_reset_port, GPIO.OUT)
-water = DigitalOutputDevice(24)
+water = DigitalOutputDevice(16)
 lick = DigitalInputDevice(25)
 
 if lick.value == 1:
@@ -63,15 +63,15 @@ water_flag=False
 water_stop_dose_flag=False
 
 #food module
-food = DigitalOutputDevice(18)
-eat = DigitalInputDevice(17)
+food = DigitalOutputDevice(23)
+eat = DigitalInputDevice(24)
 
 #beams
 #SEM
-b0=DigitalInputDevice(22)
-b1=DigitalInputDevice(23)
+b0=DigitalInputDevice(21)
+b1=DigitalInputDevice(20)
 #start
-b2=DigitalInputDevice(12) #proximity sensor operates in reverse!
+b2=DigitalInputDevice(14) #proximity sensor operates in reverse!
 
 
 #RFID
@@ -195,7 +195,9 @@ class SaveData:
             df_e.to_csv(savepath + animaltag + "_events.csv", mode="a+", header=False, encoding="utf-8-sig", index=False)
 
 #initialize
-
+#serial to ard nano servos
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+time.sleep(3)
 print("beam check")   
 print('sem safety')
 print(b0.value)
@@ -205,12 +207,11 @@ print('centre')
 print(b2.value)
 food.on()
 water.on()
+ser.write(str.encode('2')) #water available signal
 time.sleep(0.05)
 food.off()
 water.off()
-#serial to ard nano servos
-ser = serial.Serial('/dev/ttyUSB0', 9600)
-time.sleep(3)
+
 close_door(1)
 close_door(2)
 close_door(3)
@@ -223,7 +224,9 @@ time.sleep(0.5)
 open_door(2)
 time.sleep(0.5)
 open_door(1)
-time.sleep(1)
+time.sleep(0.5)
+ser.write(str.encode('1')) #water available signal
+time.sleep(0.5)
 close_door(1)
 time.sleep(0.5)
 close_door(2)
@@ -232,6 +235,7 @@ close_door(3)
 time.sleep(0.5)
 close_door(4)
 time.sleep(0.5)
+ser.write(str.encode('2')) #water available signal
 
 save = SaveData()
 for x in range(np.size(subjects)):
@@ -320,6 +324,7 @@ while True:
                 mode=5
         elif b2.value==0:
             save.append_event("", "", "start", animaltag)
+            ser.write(str.encode('2')) #water available signal
             pod_entry_flag=False
             food_flag=True
             TTL_timer=int(round(time.time() * 1000))
