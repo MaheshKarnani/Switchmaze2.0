@@ -1,0 +1,15 @@
+colorzero==2.0
+gpiozero==2.0.1
+lgpio==0.2.2.0
+numpy==2.0.0
+pandas==2.2.2
+pigpio==1.78
+pynau7802==0.2.2
+pyserial==3.5
+python-dateutil==2.9.0.post0
+pytz==2024.1
+six==1.16.0
+smbus2==0.4.3
+sparkfun-qwiic-rfid==2.0.0
+sparkfun_qwiic_i2c==1.0.0
+tzdata==2024.1
